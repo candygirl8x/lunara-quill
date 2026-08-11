@@ -1,653 +1,703 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lunara Quill</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lunara Quill</title>
 
-  <style>
-    :root {
-      --background: #f4edf5;
-      --paper: #fffaf3;
-      --purple: #684174;
-      --dark-purple: #3e2449;
-      --rose: #c6819d;
-      --gold: #d6ae6a;
-      --text: #302536;
-      --muted: #88788d;
-      --line: #e8d9e7;
-      --danger: #a73e51;
-    }
+<style>
+:root {
+  --bg: #f4edf5;
+  --card: #fffaf3;
+  --text: #302536;
+  --muted: #88788d;
+  --purple: #684174;
+  --deep: #3e2449;
+  --rose: #c6819d;
+  --gold: #d6ae6a;
+  --line: #e8d9e7;
+  --danger: #a73e51;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+/* Themes */
+html[data-theme="midnight"] {
+  --bg: #171322;
+  --card: #241c31;
+  --text: #f5edf8;
+  --muted: #c2aec8;
+  --purple: #a574c2;
+  --deep: #f0dff5;
+  --rose: #c982aa;
+  --gold: #e1bd6e;
+  --line: #493650;
+}
 
-    body {
-      margin: 0;
-      color: var(--text);
-      font-family: Georgia, "Times New Roman", serif;
-      background:
-        radial-gradient(circle at top left, #e5d2e9, transparent 35%),
-        var(--background);
-    }
+html[data-theme="rose"] {
+  --bg: #fff0f3;
+  --card: #fffafc;
+  --text: #402631;
+  --muted: #987985;
+  --purple: #a14f70;
+  --deep: #5b263d;
+  --rose: #d886a5;
+  --gold: #c4974e;
+  --line: #f0cfdc;
+}
 
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
+html[data-theme="emerald"] {
+  --bg: #edf5f0;
+  --card: #fbfffc;
+  --text: #263a34;
+  --muted: #70867e;
+  --purple: #376d61;
+  --deep: #21483f;
+  --rose: #8aa982;
+  --gold: #bc9850;
+  --line: #d4e6dd;
+}
 
-    button {
-      cursor: pointer;
-    }
+html[data-theme="royal"] {
+  --bg: #f0effa;
+  --card: #fffdfd;
+  --text: #292942;
+  --muted: #77779a;
+  --purple: #4c4d91;
+  --deep: #282957;
+  --rose: #9b82c4;
+  --gold: #c29b4e;
+  --line: #dedcf2;
+}
 
-    .app {
-      width: min(1200px, 94%);
-      margin: auto;
-      padding: 25px 0 60px;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: Georgia, "Times New Roman", serif;
+  background:
+    radial-gradient(circle at top left, #e5d2e9, transparent 35%),
+    var(--bg);
+  transition: background .3s, color .3s;
+}
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-    }
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
-    .logo {
-      display: grid;
-      width: 54px;
-      height: 54px;
-      place-items: center;
-      border-radius: 18px 6px 18px 6px;
-      color: white;
-      background: linear-gradient(135deg, var(--purple), var(--rose));
-      font-size: 1.7rem;
-    }
+button {
+  cursor: pointer;
+}
 
-    h1,
-    h2,
-    h3 {
-      color: var(--dark-purple);
-    }
+.app {
+  width: min(1200px, 94%);
+  margin: auto;
+  padding: 25px 0 60px;
+}
 
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 5vw, 3.3rem);
-    }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
 
-    h2 {
-      margin-top: 0;
-    }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
 
-    .brand p {
-      margin: 2px 0;
-      color: var(--muted);
-      font-style: italic;
-    }
+.logo {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 18px 6px 18px 6px;
+  color: white;
+  background: linear-gradient(135deg, var(--purple), var(--rose));
+  font-size: 1.7rem;
+}
 
-    .profile-badge {
-      padding: 10px 15px;
-      border: 1px solid var(--line);
-      border-radius: 50px;
-      background: #ffffffb8;
-    }
+h1,
+h2,
+h3 {
+  color: var(--deep);
+}
 
-    .layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 23px;
-    }
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.3rem);
+}
 
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: var(--paper);
-      box-shadow: 0 18px 48px #43284d1c;
-    }
+h2 {
+  margin-top: 0;
+}
 
-    .sidebar {
-      position: sticky;
-      top: 15px;
-      padding: 22px;
-    }
+.brand p {
+  margin: 2px 0;
+  color: var(--muted);
+  font-style: italic;
+}
 
-    .story-area {
-      min-height: 650px;
-      padding: clamp(22px, 4vw, 45px);
-    }
+.profile-badge {
+  padding: 10px 15px;
+  border: 1px solid var(--line);
+  border-radius: 50px;
+  background: var(--card);
+}
 
-    .library {
-      grid-column: 1 / -1;
-      padding: 24px;
-    }
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 23px;
+}
 
-    label {
-      display: block;
-      margin: 14px 0 6px;
-      color: var(--dark-purple);
-      font-weight: bold;
-    }
+.card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--card);
+  box-shadow: 0 18px 48px #43284d1c;
+}
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      outline: none;
-      color: var(--text);
-      background: white;
-    }
+.sidebar {
+  position: sticky;
+  top: 15px;
+  padding: 22px;
+}
 
-    textarea {
-      min-height: 75px;
-      resize: vertical;
-    }
+.story-area {
+  min-height: 650px;
+  padding: clamp(22px, 4vw, 45px);
+}
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--rose);
-      box-shadow: 0 0 0 3px #c6819d33;
-    }
+.library {
+  grid-column: 1 / -1;
+  padding: 24px;
+}
 
-    .button-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 17px;
-    }
+label {
+  display: block;
+  margin: 14px 0 6px;
+  color: var(--deep);
+  font-weight: bold;
+}
 
-    button {
-      padding: 11px 13px;
-      border: 0;
-      border-radius: 10px;
-    }
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+  color: var(--text);
+  background: white;
+}
 
-    .primary {
-      color: white;
-      background: var(--purple);
-    }
+textarea {
+  min-height: 75px;
+  resize: vertical;
+}
 
-    .primary:hover {
-      background: var(--dark-purple);
-    }
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px #c6819d33;
+}
 
-    .soft {
-      color: var(--dark-purple);
-      background: #eddfef;
-    }
+button {
+  padding: 11px 13px;
+  border: 0;
+  border-radius: 10px;
+}
 
-    .outline {
-      color: var(--dark-purple);
-      border: 1px solid var(--line);
-      background: transparent;
-    }
+.primary {
+  color: white;
+  background: var(--purple);
+}
 
-    .danger {
-      color: var(--danger);
-      background: #fae7ea;
-    }
+.soft {
+  color: var(--deep);
+  background: #eddfef;
+}
 
-    button:disabled {
-      cursor: wait;
-      opacity: .6;
-    }
+.outline {
+  color: var(--deep);
+  border: 1px solid var(--line);
+  background: transparent;
+}
 
-    .status {
-      min-height: 23px;
-      margin: 13px 0 0;
-      color: #35765c;
-      font-size: .9rem;
-    }
+.danger {
+  color: var(--danger);
+  background: #fae7ea;
+}
 
-    .error {
-      color: var(--danger);
-    }
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 17px;
+}
 
-    .privacy-note {
-      color: var(--muted);
-      font-size: .82rem;
-      line-height: 1.5;
-    }
+.status {
+  min-height: 23px;
+  margin: 13px 0 0;
+  color: #35765c;
+  font-size: .9rem;
+}
 
-    .welcome {
-      display: grid;
-      min-height: 560px;
-      place-items: center;
-      color: var(--muted);
-      text-align: center;
-    }
+.error {
+  color: var(--danger);
+}
 
-    .welcome-symbol {
-      color: var(--gold);
-      font-size: 4rem;
-    }
+.note {
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
 
-    .story-header {
-      margin-bottom: 25px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--line);
-    }
+.welcome {
+  display: grid;
+  min-height: 560px;
+  place-items: center;
+  color: var(--muted);
+  text-align: center;
+}
 
-    .story-header h2 {
-      margin-bottom: 9px;
-      font-size: clamp(2rem, 5vw, 3rem);
-    }
+.welcome-symbol {
+  color: var(--gold);
+  font-size: 4rem;
+}
 
-    .metadata {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+.story-header {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
 
-    .metadata span {
-      padding: 5px 10px;
-      border-radius: 50px;
-      color: var(--dark-purple);
-      background: #f0e3f1;
-      font-size: .88rem;
-    }
+.story-header h2 {
+  margin-bottom: 9px;
+  font-size: clamp(2rem, 5vw, 3rem);
+}
 
-    .story {
-      color: #403542;
-      font-size: 1.08rem;
-      line-height: 1.85;
-    }
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
-    .story p {
-      margin: 0 0 1.25rem;
-    }
+.metadata span {
+  padding: 5px 10px;
+  border-radius: 50px;
+  color: var(--deep);
+  background: #f0e3f1;
+  font-size: .88rem;
+}
 
-    .chapter-title {
-      color: var(--dark-purple);
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
+.story {
+  color: var(--text);
+  font-size: 1.08rem;
+  line-height: 1.85;
+}
 
-    .story-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 28px;
-      padding-top: 20px;
-      border-top: 1px solid var(--line);
-    }
+.story p {
+  margin: 0 0 1.25rem;
+}
 
-    .library-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      align-items: center;
-    }
+.chapter-title {
+  color: var(--deep);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
 
-    .library-header p {
-      margin-top: 0;
-      color: var(--muted);
-    }
+.story-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
 
-    .novel-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 13px;
-    }
+.library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
 
-    .novel-card {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: white;
-    }
+.library-header p {
+  margin-top: 0;
+  color: var(--muted);
+}
 
-    .novel-card h3 {
-      margin: 0 0 6px;
-    }
+.novel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 13px;
+}
 
-    .novel-card p {
-      margin: 4px 0;
-      color: var(--muted);
-      font-size: .9rem;
-    }
+.novel-card {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+}
 
-    .novel-card .button-row {
-      margin-top: 12px;
-    }
+.novel-card h3 {
+  margin: 0 0 6px;
+}
 
-    .empty-library {
-      color: var(--muted);
-      font-style: italic;
-    }
+.novel-card p {
+  margin: 4px 0;
+  color: var(--muted);
+  font-size: .9rem;
+}
 
-    [hidden] {
-      display: none !important;
-    }
+[hidden] {
+  display: none !important;
+}
 
-    @media (max-width: 850px) {
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
+@media (max-width: 850px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-      .layout {
-        grid-template-columns: 1fr;
-      }
+  .layout {
+    grid-template-columns: 1fr;
+  }
 
-      .sidebar {
-        position: static;
-      }
+  .sidebar {
+    position: static;
+  }
 
-      .library {
-        grid-column: auto;
-      }
-    }
-  </style>
+  .library {
+    grid-column: auto;
+  }
+}
+</style>
 </head>
 
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">✒</div>
-        <div>
-          <h1>Lunara Quill</h1>
-          <p>Where every heart has a story.</p>
-        </div>
-      </div>
+<main class="app">
 
-      <div class="profile-badge" id="profileBadge">
-        My private library
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">✒</div>
+    <div>
+      <h1>Lunara Quill</h1>
+      <p>Where every heart has a story.</p>
+    </div>
+  </div>
+
+  <div class="profile-badge" id="profileBadge">
+    My private library
+  </div>
+</header>
+
+<section class="layout">
+
+<aside class="card sidebar">
+  <h2>My Profile</h2>
+
+  <label for="profileName">Profile name</label>
+  <input id="profileName" placeholder="Your pen name">
+
+  <button class="soft" id="saveProfileButton" type="button">
+    Save profile
+  </button>
+
+  <label for="themeSelect">Dashboard theme</label>
+  <select id="themeSelect">
+    <option value="classic">Classic Lunara</option>
+    <option value="midnight">Midnight Romance</option>
+    <option value="rose">Rose Garden</option>
+    <option value="emerald">Emerald Library</option>
+    <option value="royal">Royal Ink</option>
+  </select>
+
+  <hr>
+
+  <h2>Create Novel</h2>
+
+  <form id="novelForm">
+    <label for="title">Novel title</label>
+    <input id="title" placeholder="Optional title">
+
+    <label for="leadName">Main lead name</label>
+    <input id="leadName" placeholder="Example: Elara">
+
+    <label for="leadGender">Main lead</label>
+    <select id="leadGender">
+      <option value="female">Female lead</option>
+      <option value="male">Male lead</option>
+    </select>
+
+    <label for="genre">Genre</label>
+    <select id="genre">
+      <option>Romance</option>
+      <option>Dark Romance</option>
+      <option>Fantasy</option>
+      <option>Mystery</option>
+      <option>Thriller</option>
+      <option>Science Fiction</option>
+      <option>Historical Fiction</option>
+      <option>Drama</option>
+      <option>Adventure</option>
+      <option>Horror</option>
+    </select>
+
+    <label for="language">Language</label>
+    <select id="language">
+      <option value="en">English</option>
+      <option value="hi">हिन्दी</option>
+    </select>
+
+    <label for="tone">Tone</label>
+    <select id="tone">
+      <option>emotional and atmospheric</option>
+      <option>dark and suspenseful</option>
+      <option>slow-burn and intimate</option>
+      <option>hopeful and warm</option>
+      <option>intense and dramatic</option>
+    </select>
+
+    <label for="setting">Setting</label>
+    <input id="setting" placeholder="Example: A rainy coastal city">
+
+    <label for="personality">Lead personality</label>
+    <textarea id="personality"
+      placeholder="Brave but guarded, loyal, imperfect..."></textarea>
+
+    <label for="conflict">Main conflict</label>
+    <textarea id="conflict"
+      placeholder="A dangerous secret threatens the family..."></textarea>
+
+    <label for="ideas">Extra ideas</label>
+    <textarea id="ideas"
+      placeholder="Secrets, relationships, twists..."></textarea>
+
+    <div class="button-row">
+      <button class="primary" id="createButton" type="submit">
+        Create
+      </button>
+
+      <button class="outline" id="clearButton" type="button">
+        Clear
+      </button>
+    </div>
+
+    <p class="note">
+      Dark romance can include danger and moral conflict, but characters
+      still have boundaries, agency, and consequences.
+    </p>
+
+    <p class="status" id="status"></p>
+  </form>
+</aside>
+
+<article class="card story-area">
+  <div class="welcome" id="welcome">
+    <div>
+      <div class="welcome-symbol">❦</div>
+      <h2>Your story will appear here</h2>
+      <p>Create a novel for your private browser library.</p>
+    </div>
+  </div>
+
+  <div id="storyContainer" hidden>
+    <header class="story-header">
+      <h2 id="storyTitle"></h2>
+
+      <div class="metadata">
+        <span id="storyGenre"></span>
+        <span id="storyLead"></span>
+        <span id="storyLanguage"></span>
       </div>
     </header>
 
-    <section class="layout">
-      <aside class="card sidebar">
-        <h2>My Profile</h2>
+    <section class="story" id="storyText"></section>
 
-        <label for="profileName">Profile name</label>
-        <input id="profileName" placeholder="Your pen name">
+    <div class="story-buttons">
+      <button class="primary" id="saveButton" type="button">
+        Save to profile
+      </button>
 
-        <button class="soft" id="saveProfileButton" type="button">
-          Save profile
-        </button>
+      <button class="soft" id="downloadButton" type="button">
+        Download
+      </button>
 
-        <hr>
+      <button class="soft" id="listenButton" type="button">
+        ▶ Listen
+      </button>
 
-        <h2>Create Novel</h2>
+      <button class="outline" id="copyButton" type="button">
+        Copy
+      </button>
 
-        <form id="novelForm">
-          <label for="title">Novel title</label>
-          <input id="title" placeholder="Optional title">
+      <button class="outline" id="stopButton" type="button">
+        Stop voice
+      </button>
+    </div>
+  </div>
+</article>
 
-          <label for="leadName">Main lead name</label>
-          <input id="leadName" placeholder="Example: Elara">
+<section class="card library">
+  <div class="library-header">
+    <div>
+      <h2>My Novels</h2>
+      <p>Only this browser profile's novels are shown.</p>
+    </div>
 
-          <label for="leadGender">Main lead</label>
-          <select id="leadGender">
-            <option value="female">Female lead</option>
-            <option value="male">Male lead</option>
-          </select>
+    <span id="novelCount">0 novels</span>
+  </div>
 
-          <label for="genre">Genre</label>
-          <select id="genre">
-            <option>Romance</option>
-            <option>Dark Romance</option>
-            <option>Fantasy</option>
-            <option>Mystery</option>
-            <option>Thriller</option>
-            <option>Science Fiction</option>
-            <option>Historical Fiction</option>
-            <option>Drama</option>
-            <option>Adventure</option>
-            <option>Horror</option>
-          </select>
+  <div class="novel-grid" id="novelGrid"></div>
+</section>
 
-          <label for="language">Language</label>
-          <select id="language">
-            <option value="en">English</option>
-            <option value="hi">हिन्दी</option>
-          </select>
+</section>
+</main>
 
-          <label for="tone">Tone</label>
-          <select id="tone">
-            <option>emotional and atmospheric</option>
-            <option>dark and suspenseful</option>
-            <option>slow-burn and intimate</option>
-            <option>hopeful and warm</option>
-            <option>intense and dramatic</option>
-          </select>
+<script>
+"use strict";
 
-          <label for="setting">Setting</label>
-          <input id="setting" placeholder="Example: A rainy coastal city">
+const PROFILE_KEY = "lunara-quill-profile";
+const THEME_KEY = "lunara-quill-theme";
+const NOVEL_PREFIX = "lunara-quill-novels-";
 
-          <label for="personality">Lead personality</label>
-          <textarea
-            id="personality"
-            placeholder="Brave but guarded, loyal, imperfect..."
-          ></textarea>
+/*
+  Leave empty for the built-in working demo generator.
 
-          <label for="conflict">Main conflict</label>
-          <textarea
-            id="conflict"
-            placeholder="A dangerous secret threatens the family..."
-          ></textarea>
+  For real AI generation, connect a secure backend:
+  const AI_ENDPOINT = "https://your-domain.com/api/generate";
 
-          <label for="ideas">Extra ideas</label>
-          <textarea
-            id="ideas"
-            placeholder="Secrets, relationships, twists..."
-          ></textarea>
+  Never place a private AI API key directly in this HTML file.
+*/
+const AI_ENDPOINT = "";
 
-          <div class="button-row">
-            <button class="primary" id="createButton" type="submit">
-              Create
-            </button>
+let currentNovel = null;
 
-            <button class="outline" id="clearButton" type="button">
-              Clear
-            </button>
-          </div>
+const $ = (id) => document.getElementById(id);
 
-          <p class="privacy-note">
-            Dark romance can include danger and moral conflict, but the
-            generator keeps character agency, boundaries, and consequences.
-          </p>
+function value(id) {
+  return $(id).value.trim();
+}
 
-          <p class="status" id="status"></p>
-        </form>
-      </aside>
+function getProfile() {
+  return localStorage.getItem(PROFILE_KEY) || "Guest";
+}
 
-      <article class="card story-area">
-        <div class="welcome" id="welcome">
-          <div>
-            <div class="welcome-symbol">❦</div>
-            <h2>Your story will appear here</h2>
-            <p>Create a novel for your private browser library.</p>
-          </div>
-        </div>
+function getNovelKey() {
+  return NOVEL_PREFIX +
+    encodeURIComponent(getProfile().toLowerCase());
+}
 
-        <div id="storyContainer" hidden>
-          <header class="story-header">
-            <h2 id="storyTitle"></h2>
+function getNovels() {
+  try {
+    return JSON.parse(localStorage.getItem(getNovelKey()) || "[]");
+  } catch {
+    return [];
+  }
+}
 
-            <div class="metadata">
-              <span id="storyGenre"></span>
-              <span id="storyLead"></span>
-              <span id="storySetting"></span>
-              <span id="storyLanguage"></span>
-            </div>
-          </header>
+function storeNovels(novels) {
+  localStorage.setItem(getNovelKey(), JSON.stringify(novels));
+}
 
-          <section class="story" id="storyText"></section>
+function showStatus(message, error = false) {
+  $("status").textContent = message;
+  $("status").className = error ? "status error" : "status";
+}
 
-          <div class="story-buttons">
-            <button class="primary" id="saveButton" type="button">
-              Save to profile
-            </button>
+function applyTheme(theme) {
+  theme = theme || "classic";
 
-            <button class="soft" id="downloadButton" type="button">
-              Download
-            </button>
+  if (theme === "classic") {
+    document.documentElement.removeAttribute("data-theme");
+  } else {
+    document.documentElement.dataset.theme = theme;
+  }
 
-            <button class="soft" id="listenButton" type="button">
-              ▶ Listen
-            </button>
+  localStorage.setItem(THEME_KEY, theme);
+  $("themeSelect").value = theme;
+}
 
-            <button class="outline" id="copyButton" type="button">
-              Copy
-            </button>
+function leadInfo(gender) {
+  if (gender === "female") {
+    return {
+      subject: "she",
+      object: "her",
+      possessive: "her",
+      label: "Female lead"
+    };
+  }
 
-            <button class="outline" id="stopButton" type="button">
-              Stop voice
-            </button>
-          </div>
-        </div>
-      </article>
+  return {
+    subject: "he",
+    object: "him",
+    possessive: "his",
+    label: "Male lead"
+  };
+}
 
-      <section class="card library">
-        <div class="library-header">
-          <div>
-            <h2>My Novels</h2>
-            <p>Only this browser profile's novels are shown.</p>
-          </div>
+function automaticTitle(genre) {
+  const titles = {
+    "Romance": "The Space Between Goodbyes",
+    "Dark Romance": "Velvet and Vengeance",
+    "Fantasy": "The Moonlit Crown",
+    "Mystery": "The Door Without a Shadow",
+    "Thriller": "The Silence After Midnight",
+    "Science Fiction": "The City Beyond the Stars",
+    "Historical Fiction": "Letters from the Other Shore",
+    "Drama": "The Things We Never Said",
+    "Adventure": "Where the Map Ends",
+    "Horror": "The House That Remembered"
+  };
 
-          <span id="novelCount">0 novels</span>
-        </div>
+  return titles[genre] || "A Story Still Becoming";
+}
 
-        <div class="novel-grid" id="novelGrid"></div>
-      </section>
-    </section>
-  </main>
+function collectNovel() {
+  const gender = value("leadGender");
+  const info = leadInfo(gender);
+  const genre = value("genre");
 
-  <script>
-    "use strict";
+  return {
+    id: Date.now(),
+    title: value("title") || automaticTitle(genre),
+    leadName: value("leadName") || "Avery",
+    gender,
+    label: info.label,
+    subject: info.subject,
+    object: info.object,
+    possessive: info.possessive,
+    genre,
+    language: value("language"),
+    tone: value("tone"),
+    setting: value("setting") || "a rain-washed city",
+    personality:
+      value("personality") ||
+      "observant, brave, emotionally complex, and afraid of abandonment",
+    conflict:
+      value("conflict") ||
+      "a dangerous truth that threatens the life the lead has built",
+    ideas: value("ideas")
+  };
+}
 
-    /*
-      Leave this empty for the offline working generator.
+function createPrompt(novel) {
+  const language =
+    novel.language === "hi" ? "Hindi" : "English";
 
-      For true AI generation, connect your secure backend here.
-      Do not put a private OpenAI or other AI API key in this file.
-
-      Example:
-      const AI_ENDPOINT = "https://your-domain.com/api/generate";
-    */
-    const AI_ENDPOINT = "";
-
-    const PROFILE_KEY = "lunara-quill-active-profile";
-    const NOVEL_PREFIX = "lunara-quill-novels-";
-
-    let currentNovel = null;
-
-    const $ = (id) => document.getElementById(id);
-
-    function getValue(id) {
-      return $(id).value.trim();
-    }
-
-    function getProfileName() {
-      return localStorage.getItem(PROFILE_KEY) || "Guest";
-    }
-
-    function getStorageKey() {
-      return NOVEL_PREFIX +
-        encodeURIComponent(getProfileName().toLowerCase());
-    }
-
-    function readNovels() {
-      try {
-        return JSON.parse(localStorage.getItem(getStorageKey()) || "[]");
-      } catch {
-        return [];
-      }
-    }
-
-    function saveNovels(novels) {
-      localStorage.setItem(getStorageKey(), JSON.stringify(novels));
-    }
-
-    function setStatus(message, error = false) {
-      $("status").textContent = message;
-      $("status").className = error ? "status error" : "status";
-    }
-
-    function leadDetails(gender) {
-      if (gender === "female") {
-        return {
-          subject: "she",
-          object: "her",
-          possessive: "her",
-          label: "Female lead"
-        };
-      }
-
-      return {
-        subject: "he",
-        object: "him",
-        possessive: "his",
-        label: "Male lead"
-      };
-    }
-
-    function automaticTitle(genre) {
-      const titles = {
-        "Romance": "The Space Between Goodbyes",
-        "Dark Romance": "Velvet and Vengeance",
-        "Fantasy": "The Moonlit Crown",
-        "Mystery": "The Door Without a Shadow",
-        "Thriller": "The Silence After Midnight",
-        "Science Fiction": "The City Beyond the Stars",
-        "Historical Fiction": "Letters from the Other Shore",
-        "Drama": "The Things We Never Said",
-        "Adventure": "Where the Map Ends",
-        "Horror": "The House That Remembered"
-      };
-
-      return titles[genre] || "A Story Still Becoming";
-    }
-
-    function collectNovel() {
-      const gender = getValue("leadGender");
-      const details = leadDetails(gender);
-      const genre = getValue("genre");
-
-      return {
-        id: Date.now(),
-        title: getValue("title") || automaticTitle(genre),
-        leadName: getValue("leadName") || "Avery",
-        gender,
-        genderLabel: details.label,
-        subject: details.subject,
-        object: details.object,
-        possessive: details.possessive,
-        genre,
-        language: getValue("language"),
-        tone: getValue("tone"),
-        setting: getValue("setting") || "a rain-washed city",
-        personality:
-          getValue("personality") ||
-          "observant, brave, emotionally complex, and afraid of abandonment",
-        conflict:
-          getValue("conflict") ||
-          "a dangerous truth that threatens the life the lead has built",
-        ideas: getValue("ideas")
-      };
-    }
-
-    function buildPrompt(novel) {
-      const language =
-        novel.language === "hi" ? "Hindi" : "English";
-
-      return `
+  return `
 Write an original opening chapter in ${language}.
 
 Genre: ${novel.genre}
@@ -659,38 +709,40 @@ Personality: ${novel.personality}
 Setting: ${novel.setting}
 Tone: ${novel.tone}
 Main conflict: ${novel.conflict}
-Extra ideas: ${novel.ideas || "Create suitable original details."}
+Additional ideas: ${novel.ideas || "Create suitable original details."}
 
 Requirements:
 - Start inside a specific scene.
-- Do not summarize the entire plot.
+- Do not summarize the whole plot.
 - Give the lead an immediate goal.
-- Show personality through actions, choices, body language, and dialogue.
-- Use sensory details involving sound, light, weather, smell, and texture.
+- Show personality through actions, body language, dialogue, and choices.
+- Use sensory details involving light, sound, weather, smell, and texture.
 - Include internal conflict and emotional contradiction.
 - Give supporting characters different motivations.
 - Use natural dialogue with pauses, disagreement, and subtext.
 - Let relationships develop gradually.
-- Do not create instant trust or instant love.
+- Avoid instant trust and instant love.
 - Make actions have believable consequences.
 - Avoid repetition and clichés.
-- End with a discovery, difficult decision, or unanswered question.
+- End with a discovery, difficult choice, or unanswered question.
 - Write approximately 1,500 words.
 
-For dark romance, keep the story intense and psychologically complex.
-Do not describe coercion or abuse as healthy love. Preserve boundaries,
-agency, consequences, and believable emotional reactions.
-      `.trim();
-    }
+For dark romance, preserve character agency, boundaries,
+consequences, and believable emotional reactions.
+Do not present coercion or abuse as healthy love.
+  `.trim();
+}
 
-    function offlineStory(novel) {
-      if (novel.language === "hi") {
-        return `
+function demoStory(novel) {
+  if (novel.language === "hi") {
+    return `
 अध्याय एक
 
 बारिश के नीचे छिपा पत्र
 
-${novel.setting} पर सुबह से बारिश हो रही थी। ${novel.leadName} पुराने दरवाज़े के नीचे खड़ा था और पानी की आवाज़ सुन रहा था। वह हमेशा छोटी-छोटी बातें देख लेता था—किसी के उत्तर देने से पहले का ठहराव, दरवाज़े के हैंडल पर रुका हाथ और डर छिपाने की कोशिश करती आँखें।
+${novel.setting} पर सुबह से बारिश हो रही थी। ${novel.leadName} पुराने दरवाज़े के नीचे खड़ा था और पानी की आवाज़ सुन रहा था।
+
+वह हमेशा छोटी-छोटी बातें देख लेता था—किसी के उत्तर देने से पहले का ठहराव, दरवाज़े के हैंडल पर रुका हाथ और डर छिपाने की कोशिश करती आँखें।
 
 तभी ${novel.leadName} को टूटे हुए फूलदान के पास एक सूखा हुआ लिफ़ाफ़ा दिखाई दिया। उस पर कोई नाम नहीं था। केवल नीली स्याही से बना एक छोटा-सा चाँद था।
 
@@ -706,19 +758,15 @@ ${novel.leadName} ने मुड़कर देखा। काले छा�
 
 उस वाक्य ने ${novel.leadName} के भीतर बंद एक दरवाज़ा खोल दिया। उसे एक स्टेशन, टूटा हुआ सूटकेस और वह आवाज़ याद आई जिसने कभी कहा था कि भाग जाना ही सबको बचाने का एकमात्र रास्ता है।
 
-लिफ़ाफ़े के भीतर एक तस्वीर थी। तस्वीर में वह कमरा था जिसे ${novel.leadName} वर्षों से देखने की हिम्मत नहीं कर पाया था। तस्वीर के पीछे लिखा था:
+लिफ़ाफ़े के भीतर एक तस्वीर थी। तस्वीर के पीछे लिखा था:
 
 अगर सच जानना है, तो सूर्यास्त से पहले अकेले लौटना।
 
-अजनबी धीरे-धीरे पीछे हट गया।
-
-“अब चुनाव तुम्हारा है।”
-
 बारिश तेज़ हो गई। ${novel.leadName} ने तस्वीर मोड़ी और उस जगह की ओर चल पड़ा जहाँ लौटने की कसम उसने कभी खुद से खाई थी।
-        `.trim();
-      }
+    `.trim();
+  }
 
-      return `
+  return `
 CHAPTER ONE
 
 The Letter Beneath the Rain
@@ -750,263 +798,266 @@ The stranger stepped away.
 “The choice is yours.”
 
 Rain gathered at the edge of the pavement. ${novel.leadName} folded the photograph and began walking toward the place ${novel.subject} had promised never to see again.
-      `.trim();
+  `.trim();
+}
+
+async function generateStory(novel) {
+  if (AI_ENDPOINT) {
+    const response = await fetch(AI_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: createPrompt(novel),
+        novel
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("The AI server returned an error.");
     }
 
-    async function createStory(novel) {
-      if (AI_ENDPOINT) {
-        const response = await fetch(AI_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            prompt: buildPrompt(novel),
-            novel
-          })
-        });
+    const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error("The AI server returned an error.");
-        }
-
-        const data = await response.json();
-
-        if (!data.text) {
-          throw new Error("The AI server returned no story.");
-        }
-
-        return data.text;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      return offlineStory(novel);
+    if (!data.text) {
+      throw new Error("The AI server returned no story.");
     }
 
-    function displayStory(novel, text) {
-      currentNovel = {
-        ...novel,
-        text
-      };
+    return data.text;
+  }
 
-      $("welcome").hidden = true;
-      $("storyContainer").hidden = false;
+  await new Promise((resolve) => setTimeout(resolve, 800));
+  return demoStory(novel);
+}
 
-      $("storyTitle").textContent = novel.title;
-      $("storyGenre").textContent = novel.genre;
-      $("storyLead").textContent =
-        novel.genderLabel + " · " + novel.leadName;
-      $("storySetting").textContent = novel.setting;
-      $("storyLanguage").textContent =
-        novel.language === "hi" ? "हिन्दी" : "English";
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-      $("storyText").innerHTML = text
-        .split(/\n\s*\n/)
-        .map((paragraph, index) => {
-          const className = index === 0 ? "chapter-title" : "";
-          return `<p class="${className}">${escapeHtml(
-            paragraph.trim()
-          )}</p>`;
-        })
-        .join("");
+function displayNovel(novel, text) {
+  currentNovel = {
+    ...novel,
+    text
+  };
+
+  $("welcome").hidden = true;
+  $("storyContainer").hidden = false;
+
+  $("storyTitle").textContent = novel.title;
+  $("storyGenre").textContent = novel.genre;
+  $("storyLead").textContent =
+    novel.label + " · " + novel.leadName;
+  $("storyLanguage").textContent =
+    novel.language === "hi" ? "हिन्दी" : "English";
+
+  $("storyText").innerHTML = text
+    .split(/\n\s*\n/)
+    .map((paragraph, index) => {
+      return `<p class="${index === 0 ? "chapter-title" : ""}">
+        ${escapeHtml(paragraph.trim())}
+      </p>`;
+    })
+    .join("");
+}
+
+function renderLibrary() {
+  const novels = getNovels();
+
+  $("novelCount").textContent =
+    novels.length + (novels.length === 1 ? " novel" : " novels");
+
+  if (!novels.length) {
+    $("novelGrid").innerHTML =
+      '<p class="note">No novels saved yet.</p>';
+    return;
+  }
+
+  $("novelGrid").innerHTML = novels.map((novel) => {
+    return `
+      <div class="novel-card">
+        <h3>${escapeHtml(novel.title)}</h3>
+        <p>${escapeHtml(novel.genre)}</p>
+        <p>${escapeHtml(novel.label)} ·
+          ${escapeHtml(novel.leadName)}</p>
+
+        <div class="button-row">
+          <button class="soft" data-open="${novel.id}">
+            Open
+          </button>
+
+          <button class="danger" data-delete="${novel.id}">
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function loadProfile() {
+  const profile = getProfile();
+
+  $("profileName").value = profile;
+  $("profileBadge").textContent =
+    profile === "Guest"
+      ? "My private library"
+      : profile + "'s private library";
+
+  renderLibrary();
+}
+
+$("themeSelect").addEventListener("change", () => {
+  applyTheme($("themeSelect").value);
+});
+
+$("saveProfileButton").addEventListener("click", () => {
+  const profile = value("profileName");
+
+  if (!profile) {
+    showStatus("Enter a profile name first.", true);
+    return;
+  }
+
+  localStorage.setItem(PROFILE_KEY, profile.slice(0, 40));
+  loadProfile();
+  showStatus("Profile saved.");
+});
+
+$("novelForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  $("createButton").disabled = true;
+  $("createButton").textContent = "Creating...";
+  showStatus("Creating realistic characters and scenes...");
+
+  try {
+    const novel = collectNovel();
+    const story = await generateStory(novel);
+
+    displayNovel(novel, story);
+    showStatus("Your novel is ready.");
+  } catch (error) {
+    showStatus(error.message, true);
+  } finally {
+    $("createButton").disabled = false;
+    $("createButton").textContent = "Create";
+  }
+});
+
+$("clearButton").addEventListener("click", () => {
+  $("novelForm").reset();
+  $("storyContainer").hidden = true;
+  $("welcome").hidden = false;
+  currentNovel = null;
+  showStatus("");
+});
+
+$("saveButton").addEventListener("click", () => {
+  if (!currentNovel) {
+    return;
+  }
+
+  const novels = getNovels();
+  novels.unshift(currentNovel);
+  storeNovels(novels);
+  renderLibrary();
+  showStatus("Novel saved to your profile.");
+});
+
+$("downloadButton").addEventListener("click", () => {
+  if (!currentNovel) {
+    return;
+  }
+
+  const file = new Blob(
+    [currentNovel.title + "\n\n" + currentNovel.text],
+    { type: "text/plain;charset=utf-8" }
+  );
+
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = currentNovel.title
+    .replace(/[^a-z0-9]+/gi, "-")
+    .toLowerCase() + ".txt";
+
+  link.click();
+  URL.revokeObjectURL(url);
+});
+
+$("copyButton").addEventListener("click", async () => {
+  if (!currentNovel) {
+    return;
+  }
+
+  await navigator.clipboard.writeText(
+    currentNovel.title + "\n\n" + currentNovel.text
+  );
+
+  showStatus("Novel copied.");
+});
+
+$("listenButton").addEventListener("click", () => {
+  if (!currentNovel) {
+    return;
+  }
+
+  if (!("speechSynthesis" in window)) {
+    showStatus("Speech is not supported in this browser.", true);
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const speech = new SpeechSynthesisUtterance(
+    currentNovel.text
+  );
+
+  speech.lang =
+    currentNovel.language === "hi" ? "hi-IN" : "en-IN";
+
+  speechSynthesis.speak(speech);
+});
+
+$("stopButton").addEventListener("click", () => {
+  speechSynthesis.cancel();
+});
+
+$("novelGrid").addEventListener("click", (event) => {
+  const openId = event.target.dataset.open;
+  const deleteId = event.target.dataset.delete;
+
+  if (openId) {
+    const novel = getNovels().find(
+      (item) => String(item.id) === String(openId)
+    );
+
+    if (novel) {
+      displayNovel(novel, novel.text);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  }
 
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+  if (deleteId) {
+    const remaining = getNovels().filter(
+      (item) => String(item.id) !== String(deleteId)
+    );
 
-    function renderLibrary() {
-      const novels = readNovels();
+    storeNovels(remaining);
+    renderLibrary();
+    showStatus("Novel deleted.");
+  }
+});
 
-      $("novelCount").textContent =
-        novels.length + (novels.length === 1 ? " novel" : " novels");
-
-      if (!novels.length) {
-        $("novelGrid").innerHTML =
-          '<p class="empty-library">No novels saved yet.</p>';
-        return;
-      }
-
-      $("novelGrid").innerHTML = novels.map((novel) => {
-        return `
-          <div class="novel-card">
-            <h3>${escapeHtml(novel.title)}</h3>
-            <p>${escapeHtml(novel.genre)}</p>
-            <p>${escapeHtml(novel.genderLabel)} ·
-              ${escapeHtml(novel.leadName)}</p>
-
-            <div class="button-row">
-              <button class="soft" data-open="${novel.id}">
-                Open
-              </button>
-
-              <button class="danger" data-delete="${novel.id}">
-                Delete
-              </button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    function loadProfile() {
-      const profile = getProfileName();
-
-      $("profileName").value = profile;
-      $("profileBadge").textContent =
-        profile === "Guest"
-          ? "My private library"
-          : profile + "'s private library";
-
-      renderLibrary();
-    }
-
-    $("saveProfileButton").addEventListener("click", () => {
-      const profile = getValue("profileName");
-
-      if (!profile) {
-        setStatus("Enter a profile name first.", true);
-        return;
-      }
-
-      localStorage.setItem(PROFILE_KEY, profile.slice(0, 40));
-      loadProfile();
-      setStatus("Profile saved.");
-    });
-
-    $("novelForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      $("createButton").disabled = true;
-      $("createButton").textContent = "Creating...";
-      setStatus("Creating realistic characters and scenes...");
-
-      try {
-        const novel = collectNovel();
-        const text = await createStory(novel);
-
-        displayStory(novel, text);
-        setStatus("Your novel is ready.");
-      } catch (error) {
-        setStatus(error.message, true);
-      } finally {
-        $("createButton").disabled = false;
-        $("createButton").textContent = "Create";
-      }
-    });
-
-    $("clearButton").addEventListener("click", () => {
-      $("novelForm").reset();
-      $("storyContainer").hidden = true;
-      $("welcome").hidden = false;
-      currentNovel = null;
-      setStatus("");
-    });
-
-    $("saveButton").addEventListener("click", () => {
-      if (!currentNovel) {
-        return;
-      }
-
-      const novels = readNovels();
-      novels.unshift(currentNovel);
-      saveNovels(novels);
-      renderLibrary();
-      setStatus("Novel saved to your profile.");
-    });
-
-    $("downloadButton").addEventListener("click", () => {
-      if (!currentNovel) {
-        return;
-      }
-
-      const file = new Blob(
-        [currentNovel.title + "\n\n" + currentNovel.text],
-        { type: "text/plain;charset=utf-8" }
-      );
-
-      const url = URL.createObjectURL(file);
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = currentNovel.title
-        .replace(/[^a-z0-9]+/gi, "-")
-        .toLowerCase() + ".txt";
-
-      link.click();
-      URL.revokeObjectURL(url);
-    });
-
-    $("copyButton").addEventListener("click", async () => {
-      if (!currentNovel) {
-        return;
-      }
-
-      await navigator.clipboard.writeText(
-        currentNovel.title + "\n\n" + currentNovel.text
-      );
-
-      setStatus("Novel copied.");
-    });
-
-    $("listenButton").addEventListener("click", () => {
-      if (!currentNovel) {
-        return;
-      }
-
-      if (!("speechSynthesis" in window)) {
-        setStatus("Speech is not supported by this browser.", true);
-        return;
-      }
-
-      speechSynthesis.cancel();
-
-      const voice = new SpeechSynthesisUtterance(
-        currentNovel.text
-      );
-
-      voice.lang =
-        currentNovel.language === "hi" ? "hi-IN" : "en-IN";
-
-      speechSynthesis.speak(voice);
-    });
-
-    $("stopButton").addEventListener("click", () => {
-      speechSynthesis.cancel();
-    });
-
-    $("novelGrid").addEventListener("click", (event) => {
-      const openId = event.target.dataset.open;
-      const deleteId = event.target.dataset.delete;
-
-      if (openId) {
-        const novel = readNovels().find(
-          (item) => String(item.id) === String(openId)
-        );
-
-        if (novel) {
-          displayStory(novel, novel.text);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-      }
-
-      if (deleteId) {
-        const remaining = readNovels().filter(
-          (item) => String(item.id) !== String(deleteId)
-        );
-
-        saveNovels(remaining);
-        renderLibrary();
-        setStatus("Novel deleted.");
-      }
-    });
-
-    loadProfile();
-  </script>
+applyTheme(localStorage.getItem(THEME_KEY) || "classic");
+loadProfile();
+</script>
 </body>
 </html>
