@@ -1015,25 +1015,95 @@ must make a choice that changes the direction of the story.
             speakNextPart();
         }
 
+        let mobileVoices = [];
+
+        function refreshMobileVoices() {
+            mobileVoices = window.speechSynthesis.getVoices();
+        }
+
+        refreshMobileVoices();
+
+        if ("onvoiceschanged" in window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged =
+                refreshMobileVoices;
+        }
+
+        function speakMobileText(text, language) {
+            const speech = window.speechSynthesis;
+
+            speech.cancel();
+
+            const selectedLanguage =
+                language === "hi" ? "hi-IN" : "en-IN";
+
+            const voice = mobileVoices.find((item) => {
+                const voiceLanguage = item.lang.toLowerCase();
+
+                if (language === "hi") {
+                    return voiceLanguage.startsWith("hi");
+                }
+
+                return voiceLanguage.startsWith("en");
+            });
+
+            const pieces =
+                text.match(/[^.!?।]+[.!?।]*/g) || [text];
+
+            let index = 0;
+
+            function speakNext() {
+                if (index >= pieces.length) {
+                    return;
+                }
+
+                const utterance =
+                    new SpeechSynthesisUtterance(
+                        pieces[index].trim()
+                    );
+
+                utterance.lang = selectedLanguage;
+                utterance.rate = 0.85;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+
+                if (voice) {
+                    utterance.voice = voice;
+                }
+
+                utterance.onend = () => {
+                    index++;
+                    speakNext();
+                };
+
+                utterance.onerror = () => {
+                    status(
+                        "Mobile browser could not read this part.",
+                        true
+                    );
+                };
+
+                speech.speak(utterance);
+            }
+
+            speakNext();
+        }
+
         $("listen").addEventListener("click", () => {
             if (!currentNovel || !currentNovel.text) {
-                status("Create or open a novel first.", true);
+                status("Please create or open a novel first.", true);
                 return;
             }
 
-            speakNovel(
+            speakMobileText(
                 currentNovel.text,
                 currentNovel.language
             );
         });
 
         $("stop").addEventListener("click", () => {
-            if ("speechSynthesis" in window) {
-                window.speechSynthesis.cancel();
-                status("Reading stopped.");
-            }
+            window.speechSynthesis.cancel();
+            status("Reading stopped.");
         });
-
 
         $("cards").addEventListener("click", event => {
             const openId = event.target.dataset.open;
