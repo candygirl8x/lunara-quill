@@ -904,24 +904,136 @@ must make a choice that changes the direction of the story.
             status("Novel copied.");
         });
 
+        let availableVoices = [];
+
+        function loadVoices() {
+            availableVoices = window.speechSynthesis.getVoices();
+        }
+
+        loadVoices();
+
+        if ("onvoiceschanged" in window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function findVoice(language) {
+            const shortLanguage = language.split("-")[0];
+
+            return availableVoices.find((voice) => {
+                return voice.lang.toLowerCase().startsWith(shortLanguage);
+            }) || null;
+        }
+
+        function splitText(text, maxLength = 180) {
+            const sentences = text.match(/[^.!?।]+[.!?।]*/g) || [text];
+            const chunks = [];
+            let current = "";
+
+            sentences.forEach((sentence) => {
+                const nextText = current + " " + sentence;
+
+                if (nextText.length > maxLength && current.trim()) {
+                    chunks.push(current.trim());
+                    current = sentence;
+                } else {
+                    current = nextText;
+                }
+            });
+
+            if (current.trim()) {
+                chunks.push(current.trim());
+            }
+
+            return chunks;
+        }
+
+        function speakNovel(text, language) {
+            if (
+                !("speechSynthesis" in window) ||
+                !("SpeechSynthesisUtterance" in window)
+            ) {
+                status(
+                    "Your browser does not support text-to-speech.",
+                    true
+                );
+                return;
+            }
+
+            const speech = window.speechSynthesis;
+            const voiceLanguage =
+                language === "hi" ? "hi-IN" : "en-IN";
+
+            speech.cancel();
+
+            const voice = findVoice(voiceLanguage);
+            const parts = splitText(text);
+            let currentPart = 0;
+
+            function speakNextPart() {
+                if (currentPart >= parts.length) {
+                    status("Reading completed.");
+                    return;
+                }
+
+                const utterance = new SpeechSynthesisUtterance(
+                    parts[currentPart]
+                );
+
+                utterance.lang = voiceLanguage;
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+
+                if (voice) {
+                    utterance.voice = voice;
+                }
+
+                utterance.onend = () => {
+                    currentPart++;
+                    speakNextPart();
+                };
+
+                utterance.onerror = () => {
+                    status(
+                        "The browser could not read this part of the story.",
+                        true
+                    );
+                };
+
+                speech.speak(utterance);
+            }
+
+            if (!voice && language === "hi") {
+                status(
+                    "Hindi voice is not installed. The browser may use its default voice.",
+                    false
+                );
+            } else {
+                status("Reading your novel...");
+            }
+
+            speakNextPart();
+        }
+
         $("listen").addEventListener("click", () => {
-            if (!currentNovel) return;
+            if (!currentNovel || !currentNovel.text) {
+                status("Create or open a novel first.", true);
+                return;
+            }
 
-            speechSynthesis.cancel();
-
-            const voice = new SpeechSynthesisUtterance(
-                currentNovel.text
+            speakNovel(
+                currentNovel.text,
+                currentNovel.language
             );
-
-            voice.lang =
-                currentNovel.language === "hi" ? "hi-IN" : "en-IN";
-
-            speechSynthesis.speak(voice);
         });
 
         $("stop").addEventListener("click", () => {
-            speechSynthesis.cancel();
+            if ("speechSynthesis" in window) {
+                window.speechSynthesis.cancel();
+                status("Reading stopped.");
+            }
         });
+
 
         $("cards").addEventListener("click", event => {
             const openId = event.target.dataset.open;
